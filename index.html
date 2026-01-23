@@ -1,3 +1,4 @@
+<!-- ✅ COPY-PASTE READY: Replace your current index.html with this full file -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,331 +11,37 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@400;600&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@400;600&display=swap"
     rel="stylesheet" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"
     integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-
-  <!-- ✅ Inline additions for Game + Card Pull Animation + Loading -->
-  <style>
-    /* ===== Fun Suspense Overlay ===== */
-    .suspenseOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.35s ease;
-      backdrop-filter: blur(6px);
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .suspenseOverlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .suspenseCard {
-      width: min(520px, 92vw);
-      background: rgba(255, 255, 255, 0.14);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 18px;
-      padding: 26px 22px;
-      color: #fff;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-      transform: translateY(12px) scale(0.98);
-      transition: 0.35s ease;
-    }
-
-    .suspenseOverlay.active .suspenseCard {
-      transform: translateY(0) scale(1);
-    }
-
-    .lockIcon {
-      font-size: 34px;
-      margin-bottom: 10px;
-      animation: lockPulse 1.3s infinite ease-in-out;
-    }
-
-    @keyframes lockPulse {
-      0%, 100% { transform: scale(1); opacity: 0.85; }
-      50% { transform: scale(1.12); opacity: 1; }
-    }
-
-    .progressWrap {
-      height: 12px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 999px;
-      overflow: hidden;
-      margin: 16px 0 10px;
-    }
-
-    .progressBar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #ff5ea8, #ffd36e, #7cf1ff);
-      border-radius: 999px;
-      transition: width 0.12s linear;
-    }
-
-    .tinyHint { font-size: 13px; opacity: 0.9; }
-
-    /* ===== Toast Notifications ===== */
-    .toastWrap {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 9998;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .toast {
-      background: rgba(0, 0, 0, 0.68);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 10px 12px;
-      border-radius: 12px;
-      width: min(320px, 86vw);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-      animation: toastIn 0.4s ease;
-    }
-
-    @keyframes toastIn {
-      from { transform: translateX(18px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    .toast .small { opacity: 0.85; font-size: 12px; }
-
-    /* ===== Secret Modal (Game) ===== */
-    .secretModal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.35s ease;
-      backdrop-filter: blur(7px);
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .secretModal.active { opacity: 1; pointer-events: auto; }
-
-    .secretBox {
-      width: min(620px, 92vw);
-      background: #fff;
-      border-radius: 18px;
-      padding: 22px;
-      position: relative;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-      transform: scale(0.96);
-      transition: 0.35s ease;
-    }
-
-    .secretModal.active .secretBox { transform: scale(1); }
-
-    .secretClose {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      border: none;
-      background: rgba(0, 0, 0, 0.06);
-      border-radius: 10px;
-      padding: 8px 10px;
-      cursor: pointer;
-    }
-
-    .secretFooter { margin-top: 10px; font-size: 12px; opacity: 0.75; }
-
-    /* ===== Pick a Gift Game ===== */
-    .gameSub { margin-top: 6px; opacity: 0.85; font-size: 14px; }
-
-    .giftGrid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .giftCard {
-      border: none;
-      cursor: pointer;
-      background: #fff;
-      border-radius: 16px;
-      padding: 12px 10px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .giftCard:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
-    }
-
-    .giftTop { font-size: 18px; opacity: 0.9; }
-    .giftBox { font-size: 44px; margin: 6px 0 4px; }
-    .giftTag { font-weight: 700; font-size: 13px; opacity: 0.8; }
-
-    .giftCard.disabled { pointer-events: none; opacity: 0.7; }
-    .giftCard.picked { outline: 3px solid rgba(255, 94, 168, 0.35); transform: translateY(-6px) scale(1.01); }
-
-    .revealBox {
-      margin-top: 14px;
-      display: none;
-      background: rgba(0, 0, 0, 0.04);
-      border-radius: 16px;
-      padding: 14px;
-    }
-
-    .revealBox.active { display: block; animation: popIn 0.25s ease; }
-    @keyframes popIn { from { transform: scale(0.98); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-    .revealTitle { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-    .revealText { font-size: 14px; opacity: 0.88; line-height: 1.35; }
-
-    .gameActions { display: flex; gap: 10px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
-    .playAgain, .closeGame { border: none; border-radius: 12px; padding: 10px 14px; cursor: pointer; font-weight: 800; }
-    .playAgain { background: #111; color: #fff; }
-    .closeGame { background: rgba(0, 0, 0, 0.08); }
-
-    @media (max-width:520px) { .giftGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-
-    /* ===== Gift 6 Pull-Card Animation ===== */
-    .pullCardOverlay {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.55);
-      z-index: 10000;
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.25s ease;
-      backdrop-filter: blur(6px);
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .pullCardOverlay.active { opacity: 1; pointer-events: auto; }
-
-    .pullCardStage {
-      width: min(420px, 92vw);
-      text-align: center;
-      transform: translateY(10px) scale(0.98);
-      transition: 0.25s ease;
-    }
-
-    .pullCardOverlay.active .pullCardStage { transform: translateY(0) scale(1); }
-
-    .giftBoxAnim {
-      position: relative;
-      width: 220px;
-      height: 220px;
-      margin: 0 auto;
-      display: grid;
-      place-items: center;
-      filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.35));
-    }
-
-    .giftBase {
-      font-size: 110px;
-      line-height: 1;
-      transform: translateY(12px);
-    }
-
-    .giftLid {
-      position: absolute;
-      top: 28px;
-      font-size: 64px;
-      line-height: 1;
-      transform-origin: center;
-      opacity: 0.95;
-    }
-
-    .popCard {
-      position: absolute;
-      bottom: 70px;
-      width: 150px;
-      height: 110px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.98);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      transform: translateY(70px) scale(0.88);
-      opacity: 0;
-    }
-
-    .popCardTop { font-size: 28px; margin-bottom: 6px; }
-
-    .popCardText {
-      font-size: 13px;
-      opacity: 0.85;
-      line-height: 1.2;
-    }
-
-    .spark { position: absolute; font-size: 18px; opacity: 0; }
-    .s1 { left: 10px; top: 40px; }
-    .s2 { right: 12px; top: 48px; }
-    .s3 { left: 22px; bottom: 64px; }
-    .s4 { right: 20px; bottom: 70px; }
-
-    .pullHint { margin-top: 14px; color: #fff; font-weight: 700; opacity: 0.92; }
-
-    .pullCardOverlay.active .giftLid { animation: lidWiggle 1.2s ease forwards; }
-    .pullCardOverlay.active .popCard { animation: cardPop 1.2s 0.25s cubic-bezier(.2, .9, .2, 1) forwards; }
-    .pullCardOverlay.active .spark { animation: sparkle 0.9s 0.35s ease forwards; }
-    .pullCardOverlay.active .giftBase { animation: baseBounce 1.1s ease forwards; }
-
-    @keyframes lidWiggle {
-      0% { transform: translateY(0) rotate(0deg) scale(1); }
-      20% { transform: translateY(-6px) rotate(-10deg) scale(1.05); }
-      45% { transform: translateY(-10px) rotate(8deg) scale(1.07); }
-      70% { transform: translateY(-6px) rotate(-6deg) scale(1.03); }
-      100% { transform: translateY(-4px) rotate(0deg) scale(1); }
-    }
-
-    @keyframes cardPop {
-      0% { opacity: 0; transform: translateY(70px) scale(0.88); }
-      55% { opacity: 1; transform: translateY(-18px) scale(1.04); }
-      75% { opacity: 1; transform: translateY(-6px) scale(0.98); }
-      100% { opacity: 1; transform: translateY(-10px) scale(1); }
-    }
-
-    @keyframes sparkle {
-      0% { opacity: 0; transform: scale(0.7); }
-      50% { opacity: 1; transform: scale(1.15); }
-      100% { opacity: 0; transform: scale(0.9); }
-    }
-
-    @keyframes baseBounce {
-      0% { transform: translateY(12px) scale(1); }
-      40% { transform: translateY(16px) scale(1.03); }
-      70% { transform: translateY(10px) scale(0.98); }
-      100% { transform: translateY(12px) scale(1); }
-    }
-  </style>
 </head>
 
 <body>
   <div id="wrapper">
+
+    <!-- ✅ WhatsApp-Style Intro (auto closes after last bubble) -->
+    <div class="chatIntro" id="chatIntro">
+      <div class="chatWindow">
+        <div class="chatHeader">
+          <div class="chatTitle">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>Birthday Chat</span>
+          </div>
+          <button class="chatClose" id="chatClose" type="button" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="chatBody" id="chatBody"></div>
+
+        <div class="chatFooter">
+          <div class="chatHint">Wait… last message aane do 😄</div>
+        </div>
+      </div>
+    </div>
+
     <div class="flag__birthday">
       <img src="./images/1.png" alt="" width="350" class="flag__left">
       <img src="./images/1.png" alt="" width="350" class="flag__right">
@@ -350,6 +57,7 @@
             <span style="--t: 4.6s;">p</span>
             <span style="--t: 4.8s;">y</span>
           </h1>
+
           <h1 class="birthday">
             <span style="--t: 5s;">B</span>
             <span style="--t: 5.2s;">i</span>
@@ -360,6 +68,7 @@
             <span style="--t: 6.2s;">a</span>
             <span style="--t: 6.4s;">y</span>
           </h1>
+
           <div class="hat">
             <img src="./images/hat.png" alt="" width="130">
           </div>
@@ -376,6 +85,11 @@
               <i class="fa-regular fa-envelope"></i>
             </div>
           </button>
+
+          <div class="ctaArrow" id="ctaArrow">
+            <span>Click here</span>
+            <i class="fa-solid fa-arrow-up"></i>
+          </div>
         </div>
       </div>
 
@@ -389,6 +103,7 @@
             <span>Dear Aastha</span>
             <i class="fa-solid fa-heart"></i>
           </div>
+
           <div class="balloon_one">
             <img width="100px" src="./images/balloon1.png" alt="">
           </div>
@@ -443,8 +158,8 @@
       <img src="./images/smiley_icon.png" alt="" width="100">
     </div>
 
-    <!-- ✅ CARD (boxMail) - stays hidden until Gift 6 is picked -->
-    <div class="boxMail">
+    <!-- ✅ CARD (opens only after Gift 6) -->
+    <div class="boxMail" id="boxMail">
       <i class="fa-solid fa-xmark" id="closeMail"></i>
       <div class="boxMail-container">
         <div class="card1">
@@ -470,14 +185,14 @@
       </div>
     </div>
 
-    <!-- ✅ Gift 6 “Pull Card Out of Gift” Animation Overlay -->
+    <!-- ✅ Gift 6 Pull Card Animation Overlay -->
     <div class="pullCardOverlay" id="pullCardOverlay" aria-hidden="true">
       <div class="pullCardStage">
-        <div class="giftBoxAnim" id="giftBoxAnim">
+        <div class="giftBoxAnim">
           <div class="giftLid">🎀</div>
           <div class="giftBase">🎁</div>
 
-          <div class="popCard" id="popCard">
+          <div class="popCard">
             <div class="popCardTop">💌</div>
             <div class="popCardText">
               <b>Secret Card!</b><br />
@@ -495,18 +210,18 @@
       </div>
     </div>
 
-    <!-- ✅ FUN LOADING (runs AFTER card close) -->
+    <!-- ✅ Loading AFTER card close -->
     <div class="suspenseOverlay" id="suspenseOverlay">
       <div class="suspenseCard">
         <div class="lockIcon"><i class="fa-solid fa-gift"></i></div>
-        <h2 id="suspenseTitle">Secret loading…</h2>
-        <p id="suspenseSub">Card close ke baad chalega 😄</p>
+        <h2 id="suspenseTitle">Secret lock re-checking… 🔐😄</h2>
+        <p id="suspenseSub">Card closed… now final surprise loading ✨</p>
 
         <div class="progressWrap">
           <div class="progressBar" id="progressBar"></div>
         </div>
 
-        <div class="tinyHint" id="tinyHint">Tip: Click anywhere to speed up ⚡</div>
+        <div class="tinyHint">Tip: Click anywhere to speed up ⚡</div>
       </div>
     </div>
 
@@ -516,7 +231,9 @@
     <!-- ✅ PICK A GIFT GAME -->
     <div class="secretModal" id="secretModal">
       <div class="secretBox">
-        <button class="secretClose" id="secretClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+        <button class="secretClose" id="secretClose" type="button">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
 
         <h2>🎁 Pick a Gift!</h2>
         <p class="gameSub">6 gifts me se ek choose karo… ek me card chhupa hai 😄</p>
@@ -552,7 +269,7 @@
             <div class="giftTag">Gift 5</div>
           </button>
 
-          <!-- ✅ Gift 6 = contains the card -->
+          <!-- ✅ Gift 6 contains the card -->
           <button class="giftCard" data-gift="5" type="button">
             <div class="giftTop">🎀</div>
             <div class="giftBox">🎁</div>
@@ -570,14 +287,58 @@
           </div>
         </div>
 
-        <div class="secretFooter">Hint: Card waala gift… thoda “special” hai 😭😂</div>
+        <div class="secretFooter">Hint: Gift 6… suspiciously “quiet” hai 😭😂</div>
+      </div>
+    </div>
+
+    <!-- ✅ FAKE WHATSAPP CALL (appears at END, does NOT close) -->
+    <div class="waCallOverlay" id="waCallOverlay" aria-hidden="true">
+      <div class="waCallCard">
+        <div class="waTop">
+          <div class="waAvatar">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="waInfo">
+            <div class="waName">Ekansh Reddy</div>
+            <div class="waStatus" id="waStatus">Incoming WhatsApp Call…</div>
+          </div>
+          <div class="waLogo">
+            <i class="fa-brands fa-whatsapp"></i>
+          </div>
+        </div>
+
+        <div class="waRings">
+          <span class="ring r1"></span>
+          <span class="ring r2"></span>
+          <span class="ring r3"></span>
+        </div>
+
+        <div class="waTime" id="waTimer">Ringing…</div>
+
+        <div class="waActions">
+          <!-- ONLY GREEN PICK BUTTON -->
+          <button class="waPick" id="waPick" type="button">
+            <i class="fa-solid fa-phone"></i>
+            Pick
+          </button>
+        </div>
+
+        <!-- After pick: call connected + message popup -->
+        <div class="waConnected" id="waConnected">
+          <div class="waWave">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="waMsg">
+            “Hello Aastha… Happy Birthday ”
+          </div>
+        </div>
       </div>
     </div>
 
   </div>
 
   <script>
-    // ===== Date typing (kept) =====
+    // ===== Date typing =====
     let datetxt = "05 February";
     let charArrDate = datetxt.split('');
     let currentIndex = 0;
@@ -609,7 +370,82 @@
       setTimeout(() => { t.remove(); }, 3200);
     }
 
-    // ===== Elements =====
+    // ===== WhatsApp Intro (auto close after last bubble) =====
+    const chatIntro = document.getElementById("chatIntro");
+    const chatBody = document.getElementById("chatBody");
+    const chatClose = document.getElementById("chatClose");
+    const btnLetter = document.getElementById("btn__letter");
+    const ctaArrow = document.getElementById("ctaArrow");
+
+    function bubbleHTML(text) {
+      return `
+        <div class="bubbleRow">
+          <div class="bubble">
+            ${text}
+            <div class="bubbleTime">now</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function typingHTML() {
+      return `
+        <div class="bubbleRow">
+          <div class="bubble typing">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>
+      `;
+    }
+
+    function scrollChatBottom() {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    async function playChatIntro() {
+      chatIntro.classList.add("active");
+      chatBody.innerHTML = "";
+
+      const messages = [
+        "Aastha… 👀",
+        "Ek secret hai… but drama nahi, only fun 😄",
+        "Rule: Overthinking allowed nahi 😂",
+        "Ready? Envelope pe click karo 🎁✨"
+      ];
+
+      for (let i = 0; i < messages.length; i++) {
+        chatBody.insertAdjacentHTML("beforeend", typingHTML());
+        scrollChatBottom();
+        await new Promise(r => setTimeout(r, 1100));
+
+        const lastRow = chatBody.lastElementChild;
+        if (lastRow) lastRow.remove();
+        chatBody.insertAdjacentHTML("beforeend", bubbleHTML(messages[i]));
+        scrollChatBottom();
+        await new Promise(r => setTimeout(r, 700));
+      }
+
+      // highlight CTA
+      btnLetter.classList.add("ctaPulse");
+      ctaArrow.classList.add("show");
+      showToast("📩 Hint:", "Click the envelope button 😄");
+
+      // ✅ AUTO CLOSE after last bubble (NEW)
+      setTimeout(() => {
+        chatIntro.classList.remove("active");
+      }, 1200);
+    }
+
+    chatClose?.addEventListener("click", () => chatIntro.classList.remove("active"));
+    chatIntro?.addEventListener("click", (e) => {
+      if (e.target === chatIntro) chatIntro.classList.remove("active");
+    });
+
+    window.addEventListener("load", () => {
+      setTimeout(() => playChatIntro(), 800);
+    });
+
+    // ===== Game + Card + Loading flow =====
     const suspenseOverlay = document.getElementById("suspenseOverlay");
     const progressBar = document.getElementById("progressBar");
     const suspenseTitle = document.getElementById("suspenseTitle");
@@ -625,19 +461,14 @@
     const playAgainBtn = document.getElementById("playAgain");
     const closeGameBtn = document.getElementById("closeGame");
 
-    const boxmail = document.querySelector('.boxMail');
+    const boxMail = document.getElementById("boxMail");
     const closeMail = document.getElementById("closeMail");
-
     const pullCardOverlay = document.getElementById("pullCardOverlay");
 
-    // ✅ Winner FIXED = 6th gift (index 5)
+    // ✅ Fixed winner = Gift 6
     const winnerIndex = 5;
 
     function playPullCardAnimation(done) {
-      if (!pullCardOverlay) {
-        done?.();
-        return;
-      }
       pullCardOverlay.classList.add("active");
       setTimeout(() => {
         pullCardOverlay.classList.remove("active");
@@ -645,16 +476,67 @@
       }, 1500);
     }
 
-    // ===== Loading AFTER card close =====
+    // ===== Fake WhatsApp Call (END) =====
+    const waCallOverlay = document.getElementById("waCallOverlay");
+    const waPick = document.getElementById("waPick");
+    const waConnected = document.getElementById("waConnected");
+    const waStatus = document.getElementById("waStatus");
+    const waTimer = document.getElementById("waTimer");
+
+    let ringTimerInt = null;
+    let ringSec = 0;
+
+    function startRingingTimer() {
+      ringSec = 0;
+      waTimer.textContent = "Ringing…";
+      clearInterval(ringTimerInt);
+      ringTimerInt = setInterval(() => {
+        ringSec++;
+        waTimer.textContent = `Ringing… ${ringSec}s`;
+      }, 1000);
+    }
+
+    function showWhatsAppCall() {
+      waCallOverlay.classList.add("active");
+      waStatus.textContent = "Incoming WhatsApp Call…";
+      waConnected.classList.remove("active");
+      waPick.disabled = false;
+      waPick.classList.remove("picked");
+      startRingingTimer();
+    }
+
+    function pickCall() {
+      waPick.disabled = true;
+      waPick.classList.add("picked");
+      waStatus.textContent = "Connecting…";
+      waTimer.textContent = "Connecting…";
+      clearInterval(ringTimerInt);
+
+      setTimeout(() => {
+        waStatus.textContent = "Call Connected";
+        waTimer.textContent = "00:01";
+        waConnected.classList.add("active");
+
+        // fake running call timer
+        let mm = 0, ss = 1;
+        setInterval(() => {
+          ss++;
+          if (ss >= 60) { mm++; ss = 0; }
+          const m = String(mm).padStart(2, "0");
+          const s = String(ss).padStart(2, "0");
+          waTimer.textContent = `${m}:${s}`;
+        }, 1000);
+
+      }, 950);
+    }
+
+    waPick?.addEventListener("click", pickCall);
+
     function runLoadingAfterCardClose() {
       suspenseOverlay.classList.add("active");
 
       let p = 0;
       let speed = 1.4;
-
-      suspenseTitle.textContent = "Secret lock re-checking… 🔐😄";
-      suspenseSub.textContent = "Card closed… now final surprise loading ✨";
-      progressBar.style.width = "0%";
 
       const stages = [
         { at: 20, t: "Counting smiles… 😄", s: "Smile count: unlimited ♾️" },
@@ -662,6 +544,8 @@
         { at: 70, t: "Almost done… 🎉", s: "Do not refresh… cake will get offended 😭" },
         { at: 92, t: "Final unlock… ✅", s: "Happy Birthday mode ON ✨" }
       ];
+
+      progressBar.style.width = "0%";
 
       const timer = setInterval(() => {
         p += speed + Math.random() * 1.2;
@@ -679,8 +563,11 @@
           clearInterval(timer);
           setTimeout(() => {
             suspenseOverlay.classList.remove("active");
-            showToast("🎉 Final Surprise Unlocked!", "Happy Birthday Aastha 💛✨");
-            secretModal.classList.remove("active");
+            showToast("🎉 Final Surprise Unlocked!", "Incoming WhatsApp call… 📞");
+
+            // ✅ END: show fake WhatsApp call, stays open
+            setTimeout(() => showWhatsAppCall(), 900);
+
           }, 450);
         }
       }, 120);
@@ -688,13 +575,6 @@
       suspenseOverlay.onclick = () => { speed += 2.2; };
     }
 
-    // ===== Secret modal close =====
-    secretClose?.addEventListener("click", () => secretModal.classList.remove("active"));
-    secretModal?.addEventListener("click", (e) => {
-      if (e.target === secretModal) secretModal.classList.remove("active");
-    });
-
-    // ===== Game helpers =====
     function resetGame() {
       revealBox.classList.remove("active");
       revealTitle.textContent = "🎉 Surprise!";
@@ -716,10 +596,9 @@
       showToast("🎮 Pick a Gift!", "Card sirf Gift 6 me hai 😄");
     }
 
-    // ✅ Button click => open game directly
-    document.getElementById("btn__letter")?.addEventListener("click", () => {
-      showToast("🎁 Mission:", "Gift choose karo… ek me card chhupa hai 😄");
-      openGame();
+    secretClose?.addEventListener("click", () => secretModal.classList.remove("active"));
+    secretModal?.addEventListener("click", (e) => {
+      if (e.target === secretModal) secretModal.classList.remove("active");
     });
 
     playAgainBtn?.addEventListener("click", () => {
@@ -731,14 +610,18 @@
       secretModal.classList.remove("active");
     });
 
-    // Gift click
+    btnLetter?.addEventListener("click", () => {
+      chatIntro.classList.remove("active");
+      showToast("🎁 Mission:", "Gift choose karo… ek me card chhupa hai 😄");
+      openGame();
+    });
+
     giftGrid?.addEventListener("click", (e) => {
       const btn = e.target.closest(".giftCard");
       if (!btn) return;
 
       const idx = Number(btn.getAttribute("data-gift"));
 
-      // lock all
       document.querySelectorAll(".giftCard").forEach(b => {
         b.classList.add("disabled");
         b.disabled = true;
@@ -755,32 +638,27 @@
 
       revealBox.classList.add("active");
 
-      // ✅ Gift 6 => play pull-card animation => open card
       if (idx === winnerIndex) {
         revealTitle.textContent = "🎉 You found the SECRET CARD!";
         revealText.textContent = "💌 Gift 6 ke andar card chhupa tha… nikal raha hai 😄✨";
 
         playPullCardAnimation(() => {
-          boxmail.classList.add("active");
+          boxMail.classList.add("active");
         });
-
       } else {
         revealTitle.textContent = "😂 Oops! Funny gift unlocked!";
         revealText.textContent = funny[Math.floor(Math.random() * funny.length)] + " (Play Again 🔁)";
       }
     });
 
-    // ✅ Card close => then loading starts
+    // Card close => then loading plays
     closeMail?.addEventListener("click", function () {
-      boxmail.classList.remove("active");
+      boxMail.classList.remove("active");
       setTimeout(() => runLoadingAfterCardClose(), 300);
     });
 
-    // Optional hints
-    setTimeout(() => showToast("✨ Hint:", "Start button dabao 😄"), 6000);
-    setTimeout(() => showToast("🎁 Hint 2:", "Gift 6… suspiciously quiet 😭😂"), 10500);
+    setTimeout(() => showToast("🎁 Hint:", "Gift 6… suspiciously “quiet” hai 😭😂"), 10500);
   </script>
-
 </body>
 
 </html>
