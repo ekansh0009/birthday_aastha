@@ -2,254 +2,838 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aastha's Birthday</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@400;600&display=swap"
-        rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aastha's Birthday</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+  <!-- ✅ MINI-GAME + FUN MYSTERY CSS (added here so you don't need to edit style.css) -->
+  <style>
+    /* ===== Fun Suspense Overlay ===== */
+    .suspenseOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.35s ease;
+      backdrop-filter: blur(6px);
+    }
+
+    .suspenseOverlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .suspenseCard {
+      width: min(520px, 92vw);
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 18px;
+      padding: 26px 22px;
+      color: #fff;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      transform: translateY(12px) scale(0.98);
+      transition: 0.35s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .suspenseOverlay.active .suspenseCard {
+      transform: translateY(0) scale(1);
+    }
+
+    .lockIcon {
+      font-size: 34px;
+      margin-bottom: 10px;
+      animation: lockPulse 1.3s infinite ease-in-out;
+    }
+
+    @keyframes lockPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.85;
+      }
+
+      50% {
+        transform: scale(1.12);
+        opacity: 1;
+      }
+    }
+
+    .progressWrap {
+      height: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 16px 0 10px;
+    }
+
+    .progressBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff5ea8, #ffd36e, #7cf1ff);
+      border-radius: 999px;
+      transition: width 0.12s linear;
+    }
+
+    .tinyHint {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    /* ===== Toast Notifications ===== */
+    .toastWrap {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .toast {
+      background: rgba(0, 0, 0, 0.68);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 10px 12px;
+      border-radius: 12px;
+      width: min(320px, 86vw);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      animation: toastIn 0.4s ease;
+    }
+
+    @keyframes toastIn {
+      from {
+        transform: translateX(18px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast .small {
+      opacity: 0.85;
+      font-size: 12px;
+    }
+
+    /* ===== Secret Modal ===== */
+    .secretModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.35s ease;
+      backdrop-filter: blur(7px);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .secretModal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .secretBox {
+      width: min(620px, 92vw);
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px;
+      position: relative;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      transform: scale(0.96);
+      transition: 0.35s ease;
+    }
+
+    .secretModal.active .secretBox {
+      transform: scale(1);
+    }
+
+    .secretClose {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border: none;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+
+    .secretFooter {
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.75;
+    }
+
+    .secretBtn {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: #ff5ea8;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* ===== Pick a Gift Game ===== */
+    .gameSub {
+      margin-top: 6px;
+      opacity: 0.85;
+      font-size: 14px;
+    }
+
+    .giftGrid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .giftCard {
+      border: none;
+      cursor: pointer;
+      background: #fff;
+      border-radius: 16px;
+      padding: 12px 10px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .giftCard:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    .giftTop {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .giftBox {
+      font-size: 44px;
+      margin: 6px 0 4px;
+    }
+
+    .giftTag {
+      font-weight: 700;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .giftCard.disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .giftCard.picked {
+      outline: 3px solid rgba(255, 94, 168, 0.35);
+      transform: translateY(-6px) scale(1.01);
+    }
+
+    .revealBox {
+      margin-top: 14px;
+      display: none;
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .revealBox.active {
+      display: block;
+      animation: popIn 0.25s ease;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.98);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .revealTitle {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .revealText {
+      font-size: 14px;
+      opacity: 0.88;
+      line-height: 1.35;
+    }
+
+    .gameActions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .playAgain,
+    .closeGame {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .playAgain {
+      background: #111;
+      color: #fff;
+    }
+
+    .closeGame {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    @media (max-width:520px) {
+      .giftGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div id="wrapper">
-        <div class="flag__birthday">
-            <img src="./images/1.png" alt="" width="350" class="flag__left">
-            <img src="./images/1.png" alt="" width="350" class="flag__right">
-        </div>
-        <div class="content">
-            <div class="left">
-                <div class="title">
-                    <h1 class="happy">
-                        <span style="--t: 4s;">H</span>
-                        <span style="--t: 4.2s;">a</span>
-                        <span style="--t: 4.4s;">p</span>
-                        <span style="--t: 4.6s;">p</span>
-                        <span style="--t: 4.8s;">y</span>
-                    </h1>
-                    <h1 class="birthday">
-                        <span style="--t: 5s;">B</span>
-                        <span style="--t: 5.2s;">i</span>
-                        <span style="--t: 5.4s;">r</span>
-                        <span style="--t: 5.6s;">t</span>
-                        <span style="--t: 5.8s;">h</span>
-                        <span style="--t: 6s;">d</span>
-                        <span style="--t: 6.2s;">a</span>
-                        <span style="--t: 6.4s;">y</span>
-                    </h1>
-                    <div class="hat">
-                        <img src="./images/hat.png" alt="" width="130">
-                    </div>
-                </div>
-                <div class="date__of__birth">
-                    <span></span>
-                </div>
-                <div class="btn">
-                    <button id="btn__letter">
-                        <div class="mail">
-                            Click Here AASTHA
-                            <i class="fa-regular fa-envelope"></i>
-                        </div>
-                    </button>
-
-                </div>
-            </div>
-            <div class="right">
-                <div class="box__account">
-                    <div class="image">
-                        <img src="./images/unnamed.png" alt="">
-                    </div>
-                    <div class="name">
-                        <i class="fa-solid fa-heart"></i>
-                        <span>Dear Aastha</span>
-                        <i class="fa-solid fa-heart"></i>
-                    </div>
-                    <div class="balloon_one">
-                        <img width="100px" src="./images/balloon1.png" alt="">
-                    </div>
-                    <div class="balloon_two">
-                        <img width="100px" src="./images/balloon2.png" alt="">
-                    </div>
-                </div>
-                <div class="cricle">
-                    <div class="text__cricle">
-                        <span style="--i: 1;">h</span>
-                        <span style="--i: 2;">a</span>
-                        <span style="--i: 3;">p</span>
-                        <span style="--i: 4;">p</span>
-                        <span style="--i: 5;">y</span>
-                        <span style="--i: 6;">-</span>
-                        <span style="--i: 7;">b</span>
-                        <span style="--i: 8;">i</span>
-                        <span style="--i: 9;">r</span>
-                        <span style="--i: 10;">t</span>
-                        <span style="--i: 11;">h</span>
-                        <span style="--i: 12;">d</span>
-                        <span style="--i: 13;">a</span>
-                        <span style="--i: 14;">y</span>
-                        <span style="--i: 15;">-</span>
-                    </div>
-                    <i class="fa-solid fa-heart"></i>
-                </div>
-            </div>
-        </div>
-        <div class="decorate_star star1" style="--t: 15s;"></div>
-        <div class="decorate_star star2" style="--t: 15.2s;"></div>
-        <div class="decorate_star star3" style="--t: 15.4s;"></div>
-        <div class="decorate_star star4" style="--t: 15.6s;"></div>
-        <div class="decorate_star star5" style="--t: 15.8s;"></div>
-        <div class="decorate_flower--one" style="--t: 15s;">
-            <img width="20" src="./images/decorate_flower.png" alt="">
-        </div>
-        <div class="decorate_flower--two" style="--t: 15.3s;">
-            <img width="20" src="./images/decorate_flower.png" alt="">
-        </div>
-        <div class="decorate_flower--three" style="--t: 15.6s;">
-            <img width="20" src="./images/decorate_flower.png" alt="">
-        </div>
-        <div class="decorate_bottom">
-            <img src="./images/decorate.png" alt="" width="100">
-        </div>
-        <div class="smiley__icon">
-            <img src="./images/smiley_icon.png" alt="" width="100">
-        </div>
-
-
-        <div class="boxMail">
-            <i class="fa-solid fa-xmark"></i>
-            <div class="boxMail-container">
-                <div class="card1">
-                    <div class="userImg">
-                        <img src="images/unnamed.png" alt="">
-                    </div>
-                    <h4 class="username">To:AASTHA<span class="underline"></span></h4>
-
-                    <h3>Happy Birthday</h3>
-                    <div class="imageCute">
-                        <img src="cute1.png" alt="">
-                    </div>
-                </div>
-                <div class="card2">
-                    <div class="card2-content">
-                        <h3>To You!</h3>
-                        <h2>Happy birthday 
-                        </h2>
-
-                        <div class="imageCute2">
-                            <img src="cute2.png" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div id="wrapper">
+    <div class="flag__birthday">
+      <img src="./images/1.png" alt="" width="350" class="flag__left">
+      <img src="./images/1.png" alt="" width="350" class="flag__right">
     </div>
 
+    <div class="content">
+      <div class="left">
+        <div class="title">
+          <h1 class="happy">
+            <span style="--t: 4s;">H</span>
+            <span style="--t: 4.2s;">a</span>
+            <span style="--t: 4.4s;">p</span>
+            <span style="--t: 4.6s;">p</span>
+            <span style="--t: 4.8s;">y</span>
+          </h1>
+          <h1 class="birthday">
+            <span style="--t: 5s;">B</span>
+            <span style="--t: 5.2s;">i</span>
+            <span style="--t: 5.4s;">r</span>
+            <span style="--t: 5.6s;">t</span>
+            <span style="--t: 5.8s;">h</span>
+            <span style="--t: 6s;">d</span>
+            <span style="--t: 6.2s;">a</span>
+            <span style="--t: 6.4s;">y</span>
+          </h1>
+          <div class="hat">
+            <img src="./images/hat.png" alt="" width="130">
+          </div>
+        </div>
+
+        <div class="date__of__birth">
+          <span></span>
+        </div>
+
+        <div class="btn">
+          <button id="btn__letter">
+            <div class="mail">
+              Click Here AASTHA
+              <i class="fa-regular fa-envelope"></i>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="box__account">
+          <div class="image">
+            <img src="./images/unnamed.png" alt="">
+          </div>
+          <div class="name">
+            <i class="fa-solid fa-heart"></i>
+            <span>Dear Aastha</span>
+            <i class="fa-solid fa-heart"></i>
+          </div>
+          <div class="balloon_one">
+            <img width="100px" src="./images/balloon1.png" alt="">
+          </div>
+          <div class="balloon_two">
+            <img width="100px" src="./images/balloon2.png" alt="">
+          </div>
+        </div>
+
+        <div class="cricle">
+          <div class="text__cricle">
+            <span style="--i: 1;">h</span>
+            <span style="--i: 2;">a</span>
+            <span style="--i: 3;">p</span>
+            <span style="--i: 4;">p</span>
+            <span style="--i: 5;">y</span>
+            <span style="--i: 6;">-</span>
+            <span style="--i: 7;">b</span>
+            <span style="--i: 8;">i</span>
+            <span style="--i: 9;">r</span>
+            <span style="--i: 10;">t</span>
+            <span style="--i: 11;">h</span>
+            <span style="--i: 12;">d</span>
+            <span style="--i: 13;">a</span>
+            <span style="--i: 14;">y</span>
+            <span style="--i: 15;">-</span>
+          </div>
+          <i class="fa-solid fa-heart"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="decorate_star star1" style="--t: 15s;"></div>
+    <div class="decorate_star star2" style="--t: 15.2s;"></div>
+    <div class="decorate_star star3" style="--t: 15.4s;"></div>
+    <div class="decorate_star star4" style="--t: 15.6s;"></div>
+    <div class="decorate_star star5" style="--t: 15.8s;"></div>
+
+    <div class="decorate_flower--one" style="--t: 15s;">
+      <img width="20" src="./images/decorate_flower.png" alt="">
+    </div>
+    <div class="decorate_flower--two" style="--t: 15.3s;">
+      <img width="20" src="./images/decorate_flower.png" alt="">
+    </div>
+    <div class="decorate_flower--three" style="--t: 15.6s;">
+      <img width="20" src="./images/decorate_flower.png" alt="">
+    </div>
+
+    <div class="decorate_bottom">
+      <img src="./images/decorate.png" alt="" width="100">
+    </div>
+    <div class="smiley__icon">
+      <img src="./images/smiley_icon.png" alt="" width="100">
+    </div>
+
+    <!-- ✅ ORIGINAL MAIL POPUP (kept same) -->
+    <div class="boxMail">
+      <i class="fa-solid fa-xmark"></i>
+      <div class="boxMail-container">
+        <div class="card1">
+          <div class="userImg">
+            <img src="images/unnamed.png" alt="">
+          </div>
+          <h4 class="username">To:AASTHA<span class="underline"></span></h4>
+          <h3>Happy Birthday</h3>
+          <div class="imageCute">
+            <img src="cute1.png" alt="">
+          </div>
+        </div>
+
+        <div class="card2">
+          <div class="card2-content">
+            <h3>To You!</h3>
+            <h2>Happy birthday</h2>
+            <div class="imageCute2">
+              <img src="cute2.png" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ FUN SUSPENSE OVERLAY -->
+    <div class="suspenseOverlay" id="suspenseOverlay">
+      <div class="suspenseCard">
+        <div class="lockIcon"><i class="fa-solid fa-gift"></i></div>
+        <h2 id="suspenseTitle">Cooking a secret for Aastha 🍳✨</h2>
+        <p id="suspenseSub">Please hold… smile loading 😄</p>
+
+        <div class="progressWrap">
+          <div class="progressBar" id="progressBar"></div>
+        </div>
+
+        <div class="tinyHint" id="tinyHint">Tip: Click anywhere to speed up ⚡</div>
+      </div>
+    </div>
+
+    <!-- ✅ TOASTS -->
+    <div class="toastWrap" id="toastWrap"></div>
+
+    <!-- ✅ SECRET MODAL + PICK A GIFT GAME -->
+    <div class="secretModal" id="secretModal">
+      <div class="secretBox">
+        <button class="secretClose" id="secretClose"><i class="fa-solid fa-xmark"></i></button>
+
+        <h2>🎁 Pick a Gift!</h2>
+        <p class="gameSub">Ek gift choose karo… but haan, overthinking allowed nahi 😄</p>
+
+        <div class="giftGrid" id="giftGrid">
+          <button class="giftCard" data-gift="0" type="button">
+            <div class="giftTop">🎀</div>
+            <div class="giftBox">🎁</div>
+            <div class="giftTag">Gift 1</div>
+          </button>
+
+          <button class="giftCard" data-gift="1" type="button">
+            <div class="giftTop">🎀</div>
+            <div class="giftBox">🎁</div>
+            <div class="giftTag">Gift 2</div>
+          </button>
+
+          <button class="giftCard" data-gift="2" type="button">
+            <div class="giftTop">🎀</div>
+            <div class="giftBox">🎁</div>
+            <div class="giftTag">Gift 3</div>
+          </button>
+
+          <button class="giftCard" data-gift="3" type="button">
+            <div class="giftTop">🎀</div>
+            <div class="giftBox">🎁</div>
+            <div class="giftTag">Gift 4</div>
+          </button>
+
+          <button class="giftCard" data-gift="4" type="button">
+            <div class="giftTop">🎀</div>
+            <div class="giftBox">🎁</div>
+            <div class="giftTag">Gift 5</div>
+          </button>
+
+          <button class="giftCard" data-gift="5" type="button">
+            <div class="giftTop">🎀</div>
+            <div class="giftBox">🎁</div>
+            <div class="giftTag">Gift 6</div>
+          </button>
+        </div>
+
+        <div class="revealBox" id="revealBox">
+          <div class="revealTitle" id="revealTitle">🎉 Surprise!</div>
+          <div class="revealText" id="revealText"></div>
+
+          <!-- OPTIONAL: If you want real gift link on win, set in JS -->
+          <a class="secretBtn" id="giftLink" href="#" target="_blank" style="display:none;">Open Your Gift</a>
+
+          <div class="gameActions">
+            <button class="playAgain" id="playAgain" type="button">Play Again 🔁</button>
+            <button class="closeGame" id="closeGame" type="button">Close ✨</button>
+          </div>
+        </div>
+
+        <div class="secretFooter">Pro tip: Agar galat gift choose ho gaya… toh phir choose karo 😭😂</div>
+      </div>
+    </div>
+  </div>
+
 </body>
+
 <script>
-    let datetxt = "05 February";
-    let datatxtletter = "My Sis. You are a very special girl. I always silently thank you for coming into my life. Today, I wish you all the best, lots of health, and lots of joy. I always hope we will celebrate many more birthdays like this together. Happy birthday to you.";
-    let titleLetter = "To you";
-    let charArrDate = datetxt.split('');
-    let charArrDateLetter = datatxtletter.split('');
-    let charArrTitle = titleLetter.split('');
-    let currentIndex = 0;
-    let currentIndexLetter = 0;
-    let currentIndexTitle = 0;
-    let date__of__birth = document.querySelector(".date__of__birth span");
-    let text__letter = document.querySelector(".text__letter p");
-    setTimeout(function () {
-        timeDatetxt = setInterval(function () {
-            if (currentIndex < charArrDate.length) {
-                date__of__birth.textContent += charArrDate[currentIndex];
-                currentIndex++;
+  // ===== Your original typing logic (kept) =====
+  let datetxt = "05 February";
+  let datatxtletter = "My Sis. You are a very special girl. I always silently thank you for coming into my life. Today, I wish you all the best, lots of health, and lots of joy. I always hope we will celebrate many more birthdays like this together. Happy birthday to you.";
+  let titleLetter = "To you";
+  let charArrDate = datetxt.split('');
+  let charArrDateLetter = datatxtletter.split('');
+  let charArrTitle = titleLetter.split('');
+  let currentIndex = 0;
+  let currentIndexLetter = 0;
+  let currentIndexTitle = 0;
+  let date__of__birth = document.querySelector(".date__of__birth span");
+
+  // NOTE: Your base code references .text__letter p which is not present in this HTML.
+  // To avoid JS crash, we safely check it.
+  let text__letter = document.querySelector(".text__letter p");
+
+  setTimeout(function () {
+    timeDatetxt = setInterval(function () {
+      if (currentIndex < charArrDate.length) {
+        date__of__birth.textContent += charArrDate[currentIndex];
+        currentIndex++;
+      } else {
+        let i = document.createElement("i");
+        i.className = "fa-solid fa-star";
+        document.querySelector(".date__of__birth").prepend(i);
+        document.querySelector(".date__of__birth").appendChild(i.cloneNode(true));
+        clearInterval(timeDatetxt);
+      }
+    }, 100);
+  }, 12000);
+
+  var intervalContent;
+  var intervalTitle;
+
+  $("#btn__letter").on("click", function () {
+    // Your old letter animation selectors may not exist; keep safe:
+    if ($(".box__letter").length) {
+      $(".box__letter").slideDown();
+      setTimeout(function () {
+        $(".letter__border").slideDown();
+      }, 1000);
+
+      setTimeout(function () {
+        intervalTitle = setInterval(function () {
+          if (currentIndexTitle < charArrTitle.length) {
+            let t = document.querySelector(".title__letter");
+            if (t) {
+              t.textContent += charArrTitle[currentIndexTitle];
+              let i = document.createElement("i");
+              i.className = "fa-solid fa-heart";
+              t.appendChild(i);
             }
-            else {
-                let i = document.createElement("i");
-                i.className = "fa-solid fa-star"
-                document.querySelector(".date__of__birth").prepend(i)
-                document.querySelector(".date__of__birth").appendChild(i.cloneNode(true))
-                clearInterval(timeDatetxt)
-            }
-        }, 100)
-    }, 12000)
+            currentIndexTitle++;
+          } else {
+            clearInterval(intervalTitle);
+          }
+        }, 100);
+      }, 2000);
 
-    var intervalContent;
-    var intervalTitle;
-    $("#btn__letter").on("click", function () {
-        $(".box__letter").slideDown()
-        setTimeout(function () {
-            $(".letter__border").slideDown();
-        }, 1000)
-        setTimeout(function () {
-            intervalTitle = setInterval(function () {
-                if (currentIndexTitle < charArrTitle.length) {
-                    document.querySelector(".title__letter").textContent += charArrTitle[currentIndexTitle];
-                    let i = document.createElement("i");
-                    i.className = "fa-solid fa-heart"
-                    document.querySelector(".title__letter").appendChild(i)
-                    currentIndexTitle++;
-                }
-                else {
-                    clearInterval(intervalTitle)
-                }
-            }, 100)
-        }, 2000)
-        setTimeout(function () {
-            document.querySelector("#heart__letter").classList.add("animationOp");
-            document.querySelector(".love__img").classList.add("animationOp");
-            document.querySelector("#mewmew").classList.add("animationOp");
-        }, 2800)
-        setTimeout(function () {
-            document.querySelectorAll(".heart").forEach((item) => {
-                item.classList.add("animation")
-            })
-        }, 3500)
-        setTimeout(function () {
-            intervalContent = setInterval(function () {
-                if (currentIndexLetter < charArrDateLetter.length) {
-                    text__letter.textContent += charArrDateLetter[currentIndexLetter];
-                    currentIndexLetter++;
-                }
-                else {
-                    clearInterval(intervalContent)
-                }
-            }, 50)
-        }, 6000)
-    })
-    $(".close").on("click", function () {
-        clearInterval(intervalContent)
-        document.querySelector(".title__letter").textContent = "";
-        text__letter.textContent = "";
-        currentIndexLetter = 0
-        currentIndexTitle = 0
-        document.querySelector("#heart__letter").classList.remove("animationOp");
-        document.querySelector(".love__img").classList.remove("animationOp");
-        document.querySelector("#mewmew").classList.remove("animationOp");
-        document.querySelectorAll(".heart").forEach((item) => {
-            item.classList.remove("animation")
-        })
-        $(".box__letter").slideUp();
-        $(".letter__border").slideUp();
-    })
+      setTimeout(function () {
+        document.querySelector("#heart__letter")?.classList.add("animationOp");
+        document.querySelector(".love__img")?.classList.add("animationOp");
+        document.querySelector("#mewmew")?.classList.add("animationOp");
+      }, 2800);
 
+      setTimeout(function () {
+        document.querySelectorAll(".heart").forEach((item) => item.classList.add("animation"));
+      }, 3500);
 
-
-    let mailBox = document.querySelector('.mail')
-    let boxmail = document.querySelector('.boxMail')
-    var close = document.querySelector('.fa-xmark')
-    mailBox.onclick = function () {
-        mailBox.classList.toggle('active')
-        boxmail.classList.add('active')
+      setTimeout(function () {
+        if (!text__letter) return;
+        intervalContent = setInterval(function () {
+          if (currentIndexLetter < charArrDateLetter.length) {
+            text__letter.textContent += charArrDateLetter[currentIndexLetter];
+            currentIndexLetter++;
+          } else {
+            clearInterval(intervalContent);
+          }
+        }, 50);
+      }, 6000);
     }
+  });
 
-    close.addEventListener('click', function () {
-        boxmail.classList.remove('active')
-    })
+  $(".close").on("click", function () {
+    clearInterval(intervalContent);
+    let t = document.querySelector(".title__letter");
+    if (t) t.textContent = "";
+    if (text__letter) text__letter.textContent = "";
+
+    currentIndexLetter = 0;
+    currentIndexTitle = 0;
+
+    document.querySelector("#heart__letter")?.classList.remove("animationOp");
+    document.querySelector(".love__img")?.classList.remove("animationOp");
+    document.querySelector("#mewmew")?.classList.remove("animationOp");
+    document.querySelectorAll(".heart").forEach((item) => item.classList.remove("animation"));
+    $(".box__letter").slideUp();
+    $(".letter__border").slideUp();
+  });
+
+  // ===== Your original mail popup logic (kept) =====
+  let mailBox = document.querySelector('.mail');
+  let boxmail = document.querySelector('.boxMail');
+  var close = document.querySelector('.boxMail .fa-xmark');
+
+  mailBox.onclick = function () {
+    mailBox.classList.toggle('active');
+    boxmail.classList.add('active');
+  }
+
+  close.addEventListener('click', function () {
+    boxmail.classList.remove('active');
+  });
+
+  // ===== FUN TOASTS =====
+  function showToast(msg, small = "") {
+    const wrap = document.getElementById("toastWrap");
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.innerHTML = `<div>${msg}</div>${small ? `<div class="small">${small}</div>` : ""}`;
+    wrap.appendChild(t);
+    setTimeout(() => { t.style.opacity = "0"; t.style.transform = "translateX(18px)"; }, 2600);
+    setTimeout(() => { t.remove(); }, 3200);
+  }
+
+  // ===== FUN SUSPENSE THEN OPEN MINI GAME =====
+  const suspenseOverlay = document.getElementById("suspenseOverlay");
+  const progressBar = document.getElementById("progressBar");
+  const suspenseTitle = document.getElementById("suspenseTitle");
+  const suspenseSub = document.getElementById("suspenseSub");
+  const secretModal = document.getElementById("secretModal");
+  const secretClose = document.getElementById("secretClose");
+
+  function runSuspenseThenReveal() {
+    suspenseOverlay.classList.add("active");
+
+    let p = 0;
+    let speed = 1.4;
+
+    suspenseTitle.textContent = "Cooking a secret for Aastha 🍳✨";
+    suspenseSub.textContent = "Please hold… smile loading 😄";
+    progressBar.style.width = "0%";
+
+    const stages = [
+      { at: 15, t: "Mixing happiness… 🥳", s: "Adding 2 spoons of cuteness 🐣" },
+      { at: 35, t: "Finding the perfect surprise… 🔎", s: "Searching: ‘Aastha’s best smile’ 😄" },
+      { at: 55, t: "Almost ready… 🎁", s: "Don’t click too fast… it’s ticklish 🤭" },
+      { at: 75, t: "Final touches… 💫", s: "Sprinkling glitter (virtually) ✨" },
+      { at: 92, t: "Last step… ✅", s: "Proof: You’re awesome 💛" }
+    ];
+
+    const timer = setInterval(() => {
+      p += speed + Math.random() * 1.2;
+      if (p > 100) p = 100;
+      progressBar.style.width = p + "%";
+
+      stages.forEach(st => {
+        if (p >= st.at) {
+          suspenseTitle.textContent = st.t;
+          suspenseSub.textContent = st.s;
+        }
+      });
+
+      if (p >= 100) {
+        clearInterval(timer);
+        setTimeout(() => {
+          suspenseOverlay.classList.remove("active");
+          secretModal.classList.add("active");
+          onSecretModalOpen(); // ✅ start game
+        }, 450);
+      }
+    }, 120);
+
+    // click overlay to speed up
+    suspenseOverlay.onclick = () => { speed += 2.2; };
+  }
+
+  // Close modal
+  secretClose?.addEventListener("click", () => secretModal.classList.remove("active"));
+  secretModal?.addEventListener("click", (e) => {
+    if (e.target === secretModal) secretModal.classList.remove("active");
+  });
+
+  // Trigger suspense + game when clicking the envelope button
+  document.getElementById("btn__letter")?.addEventListener("click", () => {
+    setTimeout(() => showToast("📩 New message unlocked!", "Sender: ‘Your favorite human’ 😄"), 700);
+    setTimeout(() => showToast("🎈 Balloon delivery arrived!", "They brought vibes only ✨"), 1600);
+    setTimeout(() => showToast("🍰 Cake system starting…", "Please do not eat the screen 😭"), 2500);
+    setTimeout(() => runSuspenseThenReveal(), 3400);
+  });
+
+  // Page load hints
+  setTimeout(() => showToast("✨ Hint:", "Envelope pe click karo 😄"), 6000);
+  setTimeout(() => showToast("🎁 Fun fact:", "A secret mini-game is hiding here…"), 10500);
+
+  // ===== PICK A GIFT MINI GAME =====
+  const giftGrid = document.getElementById("giftGrid");
+  const revealBox = document.getElementById("revealBox");
+  const revealTitle = document.getElementById("revealTitle");
+  const revealText = document.getElementById("revealText");
+  const playAgainBtn = document.getElementById("playAgain");
+  const closeGameBtn = document.getElementById("closeGame");
+  const giftLink = document.getElementById("giftLink");
+
+  let winnerIndex = 0;
+
+  function pickWinnerIndex() {
+    return Math.floor(Math.random() * 6);
+  }
+
+  function resetGame() {
+    revealBox.classList.remove("active");
+    revealText.textContent = "";
+    revealTitle.textContent = "🎉 Surprise!";
+    giftLink.style.display = "none";
+    giftLink.href = "#";
+
+    document.querySelectorAll(".giftCard").forEach(btn => {
+      btn.classList.remove("picked", "disabled");
+      btn.disabled = false;
+    });
+
+    // shuffle labels (fun)
+    const labels = ["Gift 1", "Gift 2", "Gift 3", "Gift 4", "Gift 5", "Gift 6"];
+    labels.sort(() => Math.random() - 0.5);
+    document.querySelectorAll(".giftCard .giftTag").forEach((tag, i) => tag.textContent = labels[i]);
+  }
+
+  function onSecretModalOpen() {
+    winnerIndex = pickWinnerIndex();
+    resetGame();
+    showToast("🎮 Mini game started!", "Ek gift choose karo 😄");
+  }
+
+  playAgainBtn?.addEventListener("click", () => {
+    winnerIndex = pickWinnerIndex();
+    resetGame();
+    showToast("🔁 New round!", "Iss baar luck 200% 😭😂");
+  });
+
+  closeGameBtn?.addEventListener("click", () => {
+    secretModal.classList.remove("active");
+  });
+
+  giftGrid?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".giftCard");
+    if (!btn) return;
+
+    const idx = Number(btn.getAttribute("data-gift"));
+
+    // lock others
+    document.querySelectorAll(".giftCard").forEach(b => {
+      b.classList.add("disabled");
+      b.disabled = true;
+    });
+    btn.classList.add("picked");
+
+    const funny = [
+      "😂 You won… an invisible hug! (But it’s premium quality).",
+      "🍟 You unlocked fries… but only in imagination 😭",
+      "🧸 You got a teddy… who is currently on a nap break.",
+      "🎵 Surprise song loading… ‘la la la’ (audio not included 😂)",
+      "🍰 Cake unlocked… please don’t eat the screen.",
+      "✨ Achievement unlocked: “Cutest birthday person” 🏆"
+    ];
+
+    const winText = "💛 Real gift unlocked! Ab ek proper smile compulsory 😄🎁✨";
+
+    revealBox.classList.add("active");
+
+    if (idx === winnerIndex) {
+      revealTitle.textContent = "🎉 You picked the RIGHT gift!";
+      revealText.textContent = winText;
+
+      // OPTIONAL: real gift link on win (uncomment and add your link)
+      // giftLink.href = "https://example.com";
+      // giftLink.style.display = "inline-block";
+
+    } else {
+      revealTitle.textContent = "😂 Oops! Funny gift unlocked!";
+      revealText.textContent = funny[Math.floor(Math.random() * funny.length)] + "  (Try again with Play Again 🔁)";
+    }
+  });
 </script>
 
 </html>
