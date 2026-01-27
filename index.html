@@ -386,7 +386,20 @@
   <script>
     // ✅ CHANGE THIS NUMBER (digits only, with country code; no +, no spaces)
     // Example: 919876543210
-    const WISH_PHONE = "918319505616";
+    // ✅ Put your number (10-digit ok). Code will auto-fix to 91XXXXXXXXXX
+let WISH_PHONE = "8319505616";
+
+// normalize -> digits only
+WISH_PHONE = (WISH_PHONE || "").toString().replace(/\D/g, "");
+
+// if user gave 10-digit Indian number, auto add 91
+if (WISH_PHONE.length === 10) WISH_PHONE = "91" + WISH_PHONE;
+
+// optional: basic validation
+if (WISH_PHONE.length < 11) {
+  console.warn("Invalid phone for wa.me. Use country code, e.g., 918319505616");
+}
+
 
     // ===== Date typing =====
     let datetxt = "05 February";
