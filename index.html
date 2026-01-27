@@ -13,6 +13,15 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@400;600;700&display=swap"
     rel="stylesheet" />
+
+  <!-- ✅ Extra: Disabled style for Send Wish button -->
+  <style>
+    #sendWishBtn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      filter: grayscale(0.2);
+    }
+  </style>
 </head>
 
 <body>
@@ -256,7 +265,8 @@
 
           <div class="wishActions">
             <button id="copyWishBtn" type="button">Copy</button>
-            <button id="sendWishBtn" type="button">Send wish 💌</button>
+            <!-- ✅ CHANGE: disabled by default -->
+            <button id="sendWishBtn" type="button" disabled>Send wish 💌</button>
           </div>
 
           <div class="wishNote">
@@ -387,19 +397,18 @@
     // ✅ CHANGE THIS NUMBER (digits only, with country code; no +, no spaces)
     // Example: 919876543210
     // ✅ Put your number (10-digit ok). Code will auto-fix to 91XXXXXXXXXX
-let WISH_PHONE = "8319505616";
+    let WISH_PHONE = "8319505616";
 
-// normalize -> digits only
-WISH_PHONE = (WISH_PHONE || "").toString().replace(/\D/g, "");
+    // normalize -> digits only
+    WISH_PHONE = (WISH_PHONE || "").toString().replace(/\D/g, "");
 
-// if user gave 10-digit Indian number, auto add 91
-if (WISH_PHONE.length === 10) WISH_PHONE = "91" + WISH_PHONE;
+    // if user gave 10-digit Indian number, auto add 91
+    if (WISH_PHONE.length === 10) WISH_PHONE = "91" + WISH_PHONE;
 
-// optional: basic validation
-if (WISH_PHONE.length < 11) {
-  console.warn("Invalid phone for wa.me. Use country code, e.g., 918319505616");
-}
-
+    // optional: basic validation
+    if (WISH_PHONE.length < 11) {
+      console.warn("Invalid phone for wa.me. Use country code, e.g., 918319505616");
+    }
 
     // ===== Date typing =====
     let datetxt = "05 February";
@@ -532,6 +541,15 @@ if (WISH_PHONE.length < 11) {
     const copyWishBtn = document.getElementById("copyWishBtn");
     const cakeSub = document.getElementById("cakeSub");
 
+    // ✅ NEW: Enable/Disable Send button based on typing
+    function updateSendWishState() {
+      const hasText = (wishInput?.value || "").trim().length > 0;
+      if (!sendWishBtn) return;
+      sendWishBtn.disabled = !hasText;
+    }
+    updateSendWishState();
+    wishInput?.addEventListener("input", updateSendWishState);
+
     // ===== WhatsApp call elements =====
     const waCallOverlay = document.getElementById("waCallOverlay");
     const waPick = document.getElementById("waPick");
@@ -660,6 +678,9 @@ if (WISH_PHONE.length < 11) {
       if (cakeHint) cakeHint.textContent = "Swipe left → right to cut";
 
       cakeOverlay?.classList.add("active");
+
+      // ✅ Reset send button (disabled) when opening cake scene
+      updateSendWishState();
     }
 
     function closeCakeScene() { cakeOverlay?.classList.remove("active"); }
@@ -680,6 +701,7 @@ if (WISH_PHONE.length < 11) {
         if (cakeSub) cakeSub.textContent = "Make a wish ✨";
         wishBox?.classList.add("active");
         wishInput?.focus();
+        updateSendWishState(); // ✅ keep disabled until text typed
         showToast("🎂 Cake cut!", "Ab wish likho ✨");
       }, 550);
     }
