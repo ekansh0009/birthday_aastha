@@ -1,4 +1,4 @@
-<!-- ✅ COPY-PASTE READY: Replace your current index.html with this full file -->
+<!-- ✅ COPY-PASTE READY: index.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,16 +12,14 @@
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@400;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@400;600;700&display=swap"
     rel="stylesheet" />
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 
 <body>
   <div id="wrapper">
 
-    <!-- ✅ WhatsApp-Style Intro (auto closes after last bubble) -->
+    <!-- ✅ WhatsApp-Style Intro -->
     <div class="chatIntro" id="chatIntro">
       <div class="chatWindow">
         <div class="chatHeader">
@@ -158,7 +156,7 @@
       <img src="./images/smiley_icon.png" alt="" width="100">
     </div>
 
-    <!-- ✅ CARD (opens only after Gift 6) -->
+    <!-- ✅ CARD -->
     <div class="boxMail" id="boxMail">
       <i class="fa-solid fa-xmark" id="closeMail"></i>
       <div class="boxMail-container">
@@ -222,6 +220,50 @@
         </div>
 
         <div class="tinyHint">Tip: Click anywhere to speed up ⚡</div>
+      </div>
+    </div>
+
+    <!-- ✅ CAKE CUT SCENE (Before WhatsApp Call) -->
+    <div class="cakeOverlay" id="cakeOverlay" aria-hidden="true">
+      <div class="cakeCard">
+        <button class="cakeClose" id="cakeClose" type="button" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h2>🎂 Cake Time!</h2>
+        <p class="cakeSub" id="cakeSub">Swipe to cut it ✨</p>
+
+        <div class="cakeStage" id="cakeStage">
+          <!-- Knife follows swipe -->
+          <div class="knife" id="knife" aria-hidden="true">🔪</div>
+
+          <!-- Swipe Area -->
+          <div class="cakeSwipe" id="cakeSwipe" role="button" aria-label="Swipe to cut cake" tabindex="0">
+            <div class="cakeEmoji">🎂</div>
+
+            <!-- progress cut line -->
+            <div class="cakeCutLine" id="cakeCutLine"></div>
+
+            <div class="cakeHint" id="cakeHint">Swipe left → right to cut</div>
+          </div>
+
+          <!-- slice pops out after cut -->
+          <div class="cakeSlice" id="cakeSlice">🍰</div>
+        </div>
+
+        <div class="wishBox" id="wishBox">
+          <div class="wishTitle">Make a wish ✨</div>
+          <textarea id="wishInput" maxlength="180" placeholder="Type your wish... (max 180 chars)"></textarea>
+
+          <div class="wishActions">
+            <button id="copyWishBtn" type="button">Copy</button>
+            <button id="sendWishBtn" type="button">Send wish 💌</button>
+          </div>
+
+          <div class="wishNote">
+            WhatsApp me message already filled aayega ✅ (bas Send dabana padega)
+          </div>
+        </div>
       </div>
     </div>
 
@@ -291,7 +333,7 @@
       </div>
     </div>
 
-    <!-- ✅ FAKE WHATSAPP CALL (appears at END, does NOT close) -->
+    <!-- ✅ FAKE WHATSAPP CALL -->
     <div class="waCallOverlay" id="waCallOverlay" aria-hidden="true">
       <div class="waCallCard">
         <div class="waTop">
@@ -316,14 +358,12 @@
         <div class="waTime" id="waTimer">Ringing…</div>
 
         <div class="waActions">
-          <!-- ONLY GREEN PICK BUTTON -->
           <button class="waPick" id="waPick" type="button">
             <i class="fa-solid fa-phone"></i>
             Pick
           </button>
         </div>
 
-        <!-- After pick: call connected + message popup -->
         <div class="waConnected" id="waConnected">
           <div class="waWave">
             <span></span><span></span><span></span><span></span><span></span>
@@ -331,6 +371,13 @@
           <div class="waMsg">
             “Hello Pastaa… Happy Birthday ”
           </div>
+
+          <!-- ✅ Cut shows after 4 seconds -->
+          <button class="waHang" id="waHang" type="button">
+            <i class="fa-solid fa-phone-slash"></i>
+            Cut
+          </button>
+          <div class="waHangHint" id="waHangHint">Cut karke wish bhejo 😄</div>
         </div>
       </div>
     </div>
@@ -338,6 +385,10 @@
   </div>
 
   <script>
+    // ✅ CHANGE THIS NUMBER (digits only, with country code; no +, no spaces)
+    // Example: 919876543210
+    const WISH_PHONE = "91XXXXXXXXXX";
+
     // ===== Date typing =====
     let datetxt = "05 February";
     let charArrDate = datetxt.split('');
@@ -370,7 +421,7 @@
       setTimeout(() => { t.remove(); }, 3200);
     }
 
-    // ===== WhatsApp Intro (auto close after last bubble) =====
+    // ===== WhatsApp Intro =====
     const chatIntro = document.getElementById("chatIntro");
     const chatBody = document.getElementById("chatBody");
     const chatClose = document.getElementById("chatClose");
@@ -398,9 +449,7 @@
       `;
     }
 
-    function scrollChatBottom() {
-      chatBody.scrollTop = chatBody.scrollHeight;
-    }
+    function scrollChatBottom() { chatBody.scrollTop = chatBody.scrollHeight; }
 
     async function playChatIntro() {
       chatIntro.classList.add("active");
@@ -425,27 +474,19 @@
         await new Promise(r => setTimeout(r, 700));
       }
 
-      // highlight CTA
       btnLetter.classList.add("ctaPulse");
       ctaArrow.classList.add("show");
       showToast("📩 Hint:", "Click the envelope button 😄");
 
-      // ✅ AUTO CLOSE after last bubble (NEW)
-      setTimeout(() => {
-        chatIntro.classList.remove("active");
-      }, 1200);
+      setTimeout(() => { chatIntro.classList.remove("active"); }, 1200);
     }
 
     chatClose?.addEventListener("click", () => chatIntro.classList.remove("active"));
-    chatIntro?.addEventListener("click", (e) => {
-      if (e.target === chatIntro) chatIntro.classList.remove("active");
-    });
+    chatIntro?.addEventListener("click", (e) => { if (e.target === chatIntro) chatIntro.classList.remove("active"); });
 
-    window.addEventListener("load", () => {
-      setTimeout(() => playChatIntro(), 800);
-    });
+    window.addEventListener("load", () => { setTimeout(() => playChatIntro(), 800); });
 
-    // ===== Game + Card + Loading flow =====
+    // ===== Elements =====
     const suspenseOverlay = document.getElementById("suspenseOverlay");
     const progressBar = document.getElementById("progressBar");
     const suspenseTitle = document.getElementById("suspenseTitle");
@@ -465,7 +506,30 @@
     const closeMail = document.getElementById("closeMail");
     const pullCardOverlay = document.getElementById("pullCardOverlay");
 
-    // ✅ Fixed winner = Gift 6
+    // ===== Cake elements =====
+    const cakeOverlay = document.getElementById("cakeOverlay");
+    const cakeClose = document.getElementById("cakeClose");
+    const cakeStage = document.getElementById("cakeStage");
+    const cakeSwipe = document.getElementById("cakeSwipe");
+    const cakeCutLine = document.getElementById("cakeCutLine");
+    const cakeHint = document.getElementById("cakeHint");
+    const knife = document.getElementById("knife");
+    const wishBox = document.getElementById("wishBox");
+    const wishInput = document.getElementById("wishInput");
+    const sendWishBtn = document.getElementById("sendWishBtn");
+    const copyWishBtn = document.getElementById("copyWishBtn");
+    const cakeSub = document.getElementById("cakeSub");
+
+    // ===== WhatsApp call elements =====
+    const waCallOverlay = document.getElementById("waCallOverlay");
+    const waPick = document.getElementById("waPick");
+    const waConnected = document.getElementById("waConnected");
+    const waStatus = document.getElementById("waStatus");
+    const waTimer = document.getElementById("waTimer");
+    const waHang = document.getElementById("waHang");
+    const waHangHint = document.getElementById("waHangHint");
+
+    // ===== Winner fixed =====
     const winnerIndex = 5;
 
     function playPullCardAnimation(done) {
@@ -476,105 +540,17 @@
       }, 1500);
     }
 
-    // ===== Fake WhatsApp Call (END) =====
-    const waCallOverlay = document.getElementById("waCallOverlay");
-    const waPick = document.getElementById("waPick");
-    const waConnected = document.getElementById("waConnected");
-    const waStatus = document.getElementById("waStatus");
-    const waTimer = document.getElementById("waTimer");
-
-    let ringTimerInt = null;
-    let ringSec = 0;
-
-    function startRingingTimer() {
-      ringSec = 0;
-      waTimer.textContent = "Ringing…";
-      clearInterval(ringTimerInt);
-      ringTimerInt = setInterval(() => {
-        ringSec++;
-        waTimer.textContent = `Ringing… ${ringSec}s`;
-      }, 1000);
+    // ✅ Force close gift UI when loading finishes
+    function forceCloseGiftUI() {
+      secretModal?.classList.remove("active");
+      revealBox?.classList.remove("active");
+      document.querySelectorAll(".giftCard").forEach(b => {
+        b.classList.remove("disabled", "picked");
+        b.disabled = false;
+      });
     }
 
-    function showWhatsAppCall() {
-      waCallOverlay.classList.add("active");
-      waStatus.textContent = "Incoming WhatsApp Call…";
-      waConnected.classList.remove("active");
-      waPick.disabled = false;
-      waPick.classList.remove("picked");
-      startRingingTimer();
-    }
-
-    function pickCall() {
-      waPick.disabled = true;
-      waPick.classList.add("picked");
-      waStatus.textContent = "Connecting…";
-      waTimer.textContent = "Connecting…";
-      clearInterval(ringTimerInt);
-
-      setTimeout(() => {
-        waStatus.textContent = "Call Connected";
-        waTimer.textContent = "00:01";
-        waConnected.classList.add("active");
-
-        // fake running call timer
-        let mm = 0, ss = 1;
-        setInterval(() => {
-          ss++;
-          if (ss >= 60) { mm++; ss = 0; }
-          const m = String(mm).padStart(2, "0");
-          const s = String(ss).padStart(2, "0");
-          waTimer.textContent = `${m}:${s}`;
-        }, 1000);
-
-      }, 950);
-    }
-
-    waPick?.addEventListener("click", pickCall);
-
-    function runLoadingAfterCardClose() {
-      suspenseOverlay.classList.add("active");
-
-      let p = 0;
-      let speed = 1.4;
-
-      const stages = [
-        { at: 20, t: "Counting smiles… 😄", s: "Smile count: unlimited ♾️" },
-        { at: 45, t: "Packing extra Toffee… 🍫", s: "Chocolate Wala 💛" },
-        { at: 70, t: "Almost done… 🎉", s: "Do not refresh… cake will get offended 😭" },
-        { at: 92, t: "Final unlock… ✅", s: "Happy Birthday mode ON ✨" }
-      ];
-
-      progressBar.style.width = "0%";
-
-      const timer = setInterval(() => {
-        p += speed + Math.random() * 1.2;
-        if (p > 100) p = 100;
-        progressBar.style.width = p + "%";
-
-        stages.forEach(st => {
-          if (p >= st.at) {
-            suspenseTitle.textContent = st.t;
-            suspenseSub.textContent = st.s;
-          }
-        });
-
-        if (p >= 100) {
-          clearInterval(timer);
-          setTimeout(() => {
-            suspenseOverlay.classList.remove("active");
-            showToast("🎉 Final Surprise Unlocked!", "Incoming WhatsApp call… 📞");
-
-            // ✅ END: show fake WhatsApp call, stays open
-            setTimeout(() => showWhatsAppCall(), 900);
-
-          }, 450);
-        }
-      }, 120);
-
-      suspenseOverlay.onclick = () => { speed += 2.2; };
-    }
-
+    // ===== Gift game =====
     function resetGame() {
       revealBox.classList.remove("active");
       revealTitle.textContent = "🎉 Surprise!";
@@ -597,18 +573,14 @@
     }
 
     secretClose?.addEventListener("click", () => secretModal.classList.remove("active"));
-    secretModal?.addEventListener("click", (e) => {
-      if (e.target === secretModal) secretModal.classList.remove("active");
-    });
+    secretModal?.addEventListener("click", (e) => { if (e.target === secretModal) secretModal.classList.remove("active"); });
 
     playAgainBtn?.addEventListener("click", () => {
       resetGame();
       showToast("🔁 New try!", "Hint: Gift 6 ko ignore mat karna 😭😂");
     });
 
-    closeGameBtn?.addEventListener("click", () => {
-      secretModal.classList.remove("active");
-    });
+    closeGameBtn?.addEventListener("click", () => secretModal.classList.remove("active"));
 
     btnLetter?.addEventListener("click", () => {
       chatIntro.classList.remove("active");
@@ -651,10 +623,292 @@
       }
     });
 
+    // ===== Cake swipe-to-cut =====
+    let cakeCutDone = false;
+    let isSwiping = false;
+    let swipeProgress = 0;
+    let lastWishText = "";
+
+    function showCakeScene() {
+      cakeCutDone = false;
+      isSwiping = false;
+      swipeProgress = 0;
+
+      cakeStage?.classList.remove("cut");
+      wishBox?.classList.remove("active");
+      if (wishInput) wishInput.value = "";
+
+      if (cakeSub) cakeSub.textContent = "Swipe the cake to cut it ✨";
+      if (cakeCutLine) cakeCutLine.style.width = "0%";
+      if (knife) {
+        knife.style.opacity = "0";
+        knife.style.left = "-9999px";
+        knife.style.top = "-9999px";
+      }
+      if (cakeHint) cakeHint.textContent = "Swipe left → right to cut";
+
+      cakeOverlay?.classList.add("active");
+    }
+
+    function closeCakeScene() { cakeOverlay?.classList.remove("active"); }
+
+    function finishCakeCut() {
+      if (cakeCutDone) return;
+      cakeCutDone = true;
+      isSwiping = false;
+      swipeProgress = 1;
+
+      cakeStage?.classList.add("cut");
+      if (cakeCutLine) cakeCutLine.style.width = "100%";
+      if (cakeHint) cakeHint.textContent = "Cut done ✅";
+
+      if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
+
+      setTimeout(() => {
+        if (cakeSub) cakeSub.textContent = "Make a wish ✨";
+        wishBox?.classList.add("active");
+        wishInput?.focus();
+        showToast("🎂 Cake cut!", "Ab wish likho ✨");
+      }, 550);
+    }
+
+    function setKnifePos(clientX, clientY) {
+      if (!knife || !cakeSwipe) return;
+      const rect = cakeSwipe.getBoundingClientRect();
+      const x = Math.max(rect.left, Math.min(clientX, rect.right));
+      const y = Math.max(rect.top, Math.min(clientY, rect.bottom));
+
+      knife.style.opacity = "1";
+      knife.style.left = (x + 10) + "px";
+      knife.style.top = (y - 10) + "px";
+    }
+
+    function updateProgressFromX(clientX) {
+      if (!cakeSwipe) return;
+      const rect = cakeSwipe.getBoundingClientRect();
+      const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+      swipeProgress = x / rect.width;
+
+      if (cakeCutLine) cakeCutLine.style.width = (swipeProgress * 100).toFixed(1) + "%";
+      if (swipeProgress >= 0.92) finishCakeCut();
+    }
+
+    function onSwipeStart(e) {
+      if (cakeCutDone) return;
+      isSwiping = true;
+
+      if (cakeSwipe?.setPointerCapture && e.pointerId != null) {
+        cakeSwipe.setPointerCapture(e.pointerId);
+      }
+
+      swipeProgress = 0;
+      if (cakeCutLine) cakeCutLine.style.width = "0%";
+      if (cakeHint) cakeHint.textContent = "Keep swiping…";
+
+      setKnifePos(e.clientX, e.clientY);
+      updateProgressFromX(e.clientX);
+    }
+
+    function onSwipeMove(e) {
+      if (!isSwiping || cakeCutDone) return;
+      setKnifePos(e.clientX, e.clientY);
+      updateProgressFromX(e.clientX);
+    }
+
+    function onSwipeEnd() {
+      if (!isSwiping || cakeCutDone) return;
+      isSwiping = false;
+
+      if (swipeProgress < 0.65) {
+        swipeProgress = 0;
+        if (cakeCutLine) cakeCutLine.style.width = "0%";
+        if (cakeHint) cakeHint.textContent = "Swipe properly left → right 😄";
+        showToast("😄 Try again", "Left → Right swipe karo");
+      } else {
+        finishCakeCut();
+      }
+    }
+
+    cakeSwipe?.addEventListener("pointerdown", onSwipeStart);
+    cakeSwipe?.addEventListener("pointermove", onSwipeMove);
+    cakeSwipe?.addEventListener("pointerup", onSwipeEnd);
+    cakeSwipe?.addEventListener("pointercancel", onSwipeEnd);
+    cakeSwipe?.addEventListener("click", () => {
+      if (!cakeCutDone) showToast("🔪 Cut Tip", "Swipe left → right to cut 😄");
+    });
+
+    // Wish actions
+    copyWishBtn?.addEventListener("click", async () => {
+      const wish = wishInput?.value?.trim() || "";
+      if (!wish) return showToast("😄 Wish likho", "Phir copy hoga");
+      try {
+        await navigator.clipboard.writeText(wish);
+        showToast("✅ Copied!", "Wish clipboard me aa gaya");
+      } catch {
+        showToast("⚠️ Copy failed", "Manually select karke copy kar lo");
+      }
+    });
+
+    // ✅ Send = auto-copy + store wish + show WhatsApp call (WhatsApp open after CUT button)
+    sendWishBtn?.addEventListener("click", async () => {
+      const wish = wishInput?.value?.trim() || "";
+      if (!wish) return showToast("😄 Wish likho", "Phir send karo");
+
+      lastWishText = wish;
+      localStorage.setItem("aastha_wish", wish);
+
+      try {
+        await navigator.clipboard.writeText(wish);
+        showToast("✅ Wish copied!", "Ab call pick karo 😄");
+      } catch {
+        showToast("⚠️ Copy failed", "Still ok 😄");
+      }
+
+      closeCakeScene();
+      setTimeout(() => showWhatsAppCall(), 350);
+    });
+
+    cakeClose?.addEventListener("click", () => {
+      closeCakeScene();
+      setTimeout(() => showWhatsAppCall(), 400);
+    });
+
+    cakeOverlay?.addEventListener("click", (e) => {
+      if (e.target === cakeOverlay) {
+        closeCakeScene();
+        setTimeout(() => showWhatsAppCall(), 400);
+      }
+    });
+
+    // ===== WhatsApp Call =====
+    let ringTimerInt = null;
+    let ringSec = 0;
+    let hangBtnTimer = null;
+
+    function startRingingTimer() {
+      ringSec = 0;
+      waTimer.textContent = "Ringing…";
+      clearInterval(ringTimerInt);
+      ringTimerInt = setInterval(() => {
+        ringSec++;
+        waTimer.textContent = `Ringing… ${ringSec}s`;
+      }, 1000);
+    }
+
+    function showWhatsAppCall() {
+      waCallOverlay.classList.add("active");
+      waStatus.textContent = "Incoming WhatsApp Call…";
+      waConnected.classList.remove("active");
+      waPick.disabled = false;
+      waPick.classList.remove("picked");
+
+      clearTimeout(hangBtnTimer);
+      waHang?.classList.remove("show");
+      waHangHint?.classList.remove("show");
+
+      startRingingTimer();
+    }
+
+    function pickCall() {
+      waPick.disabled = true;
+      waPick.classList.add("picked");
+      waStatus.textContent = "Connecting…";
+      waTimer.textContent = "Connecting…";
+      clearInterval(ringTimerInt);
+
+      setTimeout(() => {
+        waStatus.textContent = "Call Connected";
+        waTimer.textContent = "00:01";
+        waConnected.classList.add("active");
+
+        let mm = 0, ss = 1;
+        setInterval(() => {
+          ss++;
+          if (ss >= 60) { mm++; ss = 0; }
+          const m = String(mm).padStart(2, "0");
+          const s = String(ss).padStart(2, "0");
+          waTimer.textContent = `${m}:${s}`;
+        }, 1000);
+
+        // ✅ show CUT after 4 sec
+        clearTimeout(hangBtnTimer);
+        hangBtnTimer = setTimeout(() => {
+          waHang?.classList.add("show");
+          waHangHint?.classList.add("show");
+        }, 4000);
+
+      }, 950);
+    }
+
+    waPick?.addEventListener("click", pickCall);
+
+    function openWishOnWhatsApp() {
+      const wish = (lastWishText || localStorage.getItem("aastha_wish") || "").trim();
+      if (!wish) {
+        showToast("😭 Wish missing", "Pehle cake pe wish likho");
+        return;
+      }
+      const msg = `Aastha's Birthday Wish ✨:\n${wish}`;
+      const url = `https://wa.me/${WISH_PHONE}?text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank");
+      showToast("💌 Wish ready!", "WhatsApp me bas Send dabao 😄");
+    }
+
+    waHang?.addEventListener("click", () => {
+      openWishOnWhatsApp();
+    });
+
+    // ===== Loading flow after card close =====
+    function runLoadingAfterCardClose() {
+      suspenseOverlay.classList.add("active");
+
+      let p = 0;
+      let speed = 1.4;
+
+      const stages = [
+        { at: 20, t: "Counting smiles… 😄", s: "Smile count: unlimited ♾️" },
+        { at: 45, t: "Packing extra Toffee… 🍫", s: "Chocolate Wala 💛" },
+        { at: 70, t: "Almost done… 🎉", s: "Do not refresh… cake will get offended 😭" },
+        { at: 92, t: "Final unlock… ✅", s: "Happy Birthday mode ON ✨" }
+      ];
+
+      progressBar.style.width = "0%";
+
+      const timer = setInterval(() => {
+        p += speed + Math.random() * 1.2;
+        if (p > 100) p = 100;
+        progressBar.style.width = p + "%";
+
+        stages.forEach(st => {
+          if (p >= st.at) {
+            suspenseTitle.textContent = st.t;
+            suspenseSub.textContent = st.s;
+          }
+        });
+
+        if (p >= 100) {
+          clearInterval(timer);
+          setTimeout(() => {
+            suspenseOverlay.classList.remove("active");
+
+            // ✅ IMPORTANT: auto close gift UI
+            forceCloseGiftUI();
+
+            // ✅ cake comes now
+            showToast("🎂 Cake Time!", "Swipe cake to cut & make a wish ✨");
+            setTimeout(() => showCakeScene(), 600);
+
+          }, 450);
+        }
+      }, 120);
+
+      suspenseOverlay.onclick = () => { speed += 2.2; };
+    }
+
     // Card close => then loading plays
     closeMail?.addEventListener("click", function () {
       boxMail.classList.remove("active");
-      setTimeout(() => runLoadingAfterCardClose(), 300);
+      setTimeout(() => runLoadingAfterCardClose(), 250);
     });
 
     setTimeout(() => showToast("🎁 Hint:", "Gift 6… suspiciously “quiet” hai 😭😂"), 10500);
